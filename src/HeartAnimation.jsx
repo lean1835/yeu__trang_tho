@@ -9,7 +9,7 @@ const HeartAnimation = () => {
     const pi = Math.PI;
     const e = Math.E;
     const xVals = [], yVals = [];
-    const scale = 80;
+    const scale = 111;
 
     for (let i = 0; i <= 1000; i++) {
       const x = -Math.sqrt(pi) + (2 * Math.sqrt(pi) * i) / 1000;
@@ -44,12 +44,11 @@ const HeartAnimation = () => {
     const ctx = canvas.getContext('2d');
 
     let frame = 0;
-    const totalFrames = 150; // 5s * 50fps = 250 frames
+    const totalFrames = 150; // 5s * 50fps
     const interval = setInterval(() => {
-      const a = (frame / totalFrames) * 6; // a từ 0 đến 6 trong 5s
+      const a = (frame / totalFrames) * 6; // a từ 0 → 6
       drawFrame(ctx, a);
 
-      // Hiện chữ khi a gần 3
       if (Math.abs(a - 3) < 0.05) {
         setShowText(true);
         setTimeout(() => setShowText(false), 2000);
@@ -61,61 +60,33 @@ const HeartAnimation = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Trái tim bay khắp màn hình
- useEffect(() => {
-  const createFloatingIcon = () => {
-    // Tỉ lệ: 2 trái tim 💖 : 1 chó 🐶 : 1 thỏ 🐰
-    const icons = ['💖', '💖','💖', '🐶', '🐰'];
-    const icon = icons[Math.floor(Math.random() * icons.length)];
+  useEffect(() => {
+    const createFloatingIcon = () => {
+      const icons = ['💖', '💖', '💖', '🐶', '🐰'];
+      const icon = icons[Math.floor(Math.random() * icons.length)];
 
-    const el = document.createElement('div');
-    el.className = 'floating-heart';
-    el.innerText = icon;
+      const el = document.createElement('div');
+      el.className = 'floating-heart';
+      el.innerText = icon;
 
-    // Tăng kích thước thêm 4px
-    const size = Math.random() * 10 + 14; // 14 → 24px
-    el.style.fontSize = `${size}px`;
+      const size = Math.random() * 10 + 18; // 18–28px
+      el.style.fontSize = `${size}px`;
+      el.style.animationDuration = `${Math.random() * 1.2 + 1.8}s`; // 1.8–3s
+      el.style.left = `${Math.random() * 100}vw`;
 
-    // Tăng tốc độ bay (bay nhanh hơn)
-    el.style.animationDuration = `${Math.random() * 1.5 + 2.0}s`; // 2 → 3.5s
+      document.body.appendChild(el);
+      el.addEventListener('animationend', () => el.remove());
+    };
 
-    el.style.left = `${Math.random() * 100}vw`;
-    document.body.appendChild(el);
+    const interval = setInterval(createFloatingIcon, 120); // mật độ cao
 
-    el.addEventListener('animationend', () => el.remove());
-  };
-
-  // ⚡ Tăng mật độ bay: tạo icon mỗi 120ms (trước là 200ms)
-  const interval = setInterval(createFloatingIcon, 120);
-
-  return () => clearInterval(interval);
-}, []);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
-    <div
-      style={{
-        backgroundColor: 'white',
-        height: '100vh',
-        width: '100vw',
-        overflow: 'hidden',
-        position: 'relative',
-        zIndex: 1,
-      }}
-    >
-      <canvas
-        ref={canvasRef}
-        width={800}
-        height={500}
-        style={{
-          display: 'block',
-          margin: '0 auto',
-          zIndex: 1,
-        }}
-      />
-
-      {showText && (
-        <div className="love-text">Yêu em 💗</div>
-      )}
+    <div className="heart-container">
+      <canvas ref={canvasRef} className="heart-canvas" width={800} height={500} />
+      {showText && <div className="heart-text">Yêu em 💗</div>}
     </div>
   );
 };
